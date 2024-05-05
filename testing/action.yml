@@ -18,7 +18,7 @@ runs:
       with:
         node-version: ${{ inputs.nodeVersion }}
         cache: 'yarn'
-    - run: npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN -g
+    - run: npm config set //npm.pkg.github.com/:_authToken=$NPM_TOKEN -g
       env:
         NPM_TOKEN: ${{ inputs.npmToken }}
       shell: bash
