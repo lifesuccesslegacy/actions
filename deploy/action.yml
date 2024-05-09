@@ -1,0 +1,15 @@
+name: Deploy Action
+description: Configures a Cluster
+author: Casey Morford
+icon: box
+color: blue-dark
+inputs:
+  namespace:
+    description: Namespace
+  values:
+    description: Clear Text Values (JSON String)
+  secrets:
+    description: Secrets (JSON String)
+runs:
+  using: docker
+  image: Dockerfile
