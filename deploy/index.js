@@ -45,7 +45,7 @@ const getAllFiles = async (pattern, options = null) => {
 
 const generateFiles = async (namespace, values, secrets) => {
   const configs = new Set();
-  const files = await getAllFiles('.github/deploy/**/*.hbs');
+  const files = await getAllFiles('.deploy/**/*.hbs');
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
@@ -109,8 +109,8 @@ async function run() {
       for (let i = 0; i < configFiles.length; i++) {
         const configPath = configFiles[i];
         console.log(`Applying ./${configPath}`)
-        // const secretsArgs = [ 'apply', '-f', `./${configPath}` ]
-        // await exec.exec('kubectl', secretsArgs)
+        const secretsArgs = [ 'apply', '-f', `./${configPath}` ]
+        await exec.exec('kubectl', secretsArgs)
       }
     } catch (error) {
       core.error(error);
