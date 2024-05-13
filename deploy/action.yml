@@ -9,7 +9,9 @@ inputs:
   values:
     description: Clear Text Values (JSON String)
   secrets:
-    description: Secrets (JSON String)
+    description: Github Secrets (JSON String)
+  vars:
+    description: Github Variables (JSON String)
 runs:
   using: docker
   image: Dockerfile

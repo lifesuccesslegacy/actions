@@ -29,6 +29,11 @@ const getSecrets = () => {
   return JSON.parse(secrets)
 }
 
+const getVars = () => {
+  const vars = core.getInput('vars')
+  return JSON.parse(vars)
+}
+
 const getValues = () => {
   const values = core.getInput('values')
   return JSON.parse(values)
@@ -43,15 +48,15 @@ const getAllFiles = async (pattern, options = null) => {
   })
 }
 
-const generateFiles = async (namespace, values, secrets) => {
+const generateFiles = async (namespace, values, secrets, vars) => {
   const configs = new Set();
-  const files = await getAllFiles('.github/deploy/**/*.hbs');
+  const files = await getAllFiles('.deploy/**/*.hbs');
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     const templateContents = await readFile(file);
     const template = Handlebars.compile(templateContents.toString(), { noEscape: true });
-    const output = template({ namespace, ...values, ...secrets });
+    const output = template({ namespace, ...values, ...secrets, ...vars });
     const newFile = file.substr(0, file.length - 4);
     console.log(`Writing ${newFile}`);
     await writeFile(`${newFile}`, output);
@@ -96,6 +101,7 @@ async function run() {
       // const context = github.context;
       const namespace = getNamespace();
       const secrets = getSecrets();
+      const vars = getVars();
       const values = getValues();
 
       // Authenticate Google Cloud
@@ -104,13 +110,13 @@ async function run() {
       // Get Kube Credentials
       await getKubeCredentials()
 
-      const configFiles = await generateFiles(namespace, values, secrets);
+      const configFiles = await generateFiles(namespace, values, secrets, vars);
 
       for (let i = 0; i < configFiles.length; i++) {
         const configPath = configFiles[i];
         console.log(`Applying ./${configPath}`)
-        // const secretsArgs = [ 'apply', '-f', `./${configPath}` ]
-        // await exec.exec('kubectl', secretsArgs)
+        const secretsArgs = [ 'apply', '-f', `./${configPath}` ]
+        await exec.exec('kubectl', secretsArgs)
       }
     } catch (error) {
       core.error(error);
