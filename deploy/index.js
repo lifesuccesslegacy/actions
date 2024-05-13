@@ -15,6 +15,10 @@ Handlebars.registerHelper('base64', (string) => {
    return base64encode(string)
 })
 
+Handlebars.registerHelper('version', (string) => {
+  return string.replace(/[^0-9.beta\-]/g, '')
+})
+
 /**
  * Input fetchers
  */
